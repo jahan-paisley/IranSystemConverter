@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConvertToIranSystemData.cs" />
+    <Compile Include="ConvertToIranSystem.cs" />
     <Compile Include="ConvertTo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
