@@ -1,4 +1,7 @@
-﻿namespace IranSystemConvertor
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace IranSystemConvertor
 {
     using System;
 
@@ -70,9 +73,10 @@
             bool beforeIsLetter = false; /* antaýa signo estas (persa) litero */
             bool afterIsLetter = false; /* posta signo estas (persa) litero */
 
-            if (uni < 0x80) return uni;
             /* Arab numbers / Arabaj ciferoj */
-            if (uni >= 0x30 && uni <= 0x39) return uni;
+            if (uni >= 0x30 && uni <= 0x39) return (byte)(uni + 80);
+
+            if (uni < 0x80) return uni;
 
             /* Assume that a Persian letter is between the codes 0x0620 and 0x06D0 */
             /* Supozu ke Persa litero havas kodon inter 0x0620 kaj 0x06D0. */
@@ -294,6 +298,30 @@
             return uni;
         }
 
+        public static IEnumerable<byte> ArabicToIranSys(byte[] szSrc, string irs_columns)
+        {
+            var columns = irs_columns.Split(',').Select(int.Parse).ToList();
+            int colIndex = 0, i = 0;
+
+            while (i < szSrc.Length)
+            {
+                while (!columns.Contains(colIndex) && i < szSrc.Length)
+                {
+                    yield return szSrc[i];
+                    if (szSrc[i] == 0x7c)
+                        colIndex++;
+                    i++;
+                }
+                var columnBytes = szSrc.Skip(i).TakeWhile(o => o != 0x7c).ToArray();
+                var arabicToIranSys = ArabicToIranSys(columnBytes);
+                foreach (byte t in arabicToIranSys)
+                    yield return t;
+                i += columnBytes.Length + 1;
+                colIndex++;
+                yield return 0x7c;
+            }
+        }
+
         public static byte[] ArabicToIranSys(byte[] szSrc)
         {
             var szTemp = new byte[szSrc.Length];
@@ -334,13 +362,13 @@
                         // in place reversal
                         tmpRvsTxt = PubStrReverse(tmpRvsTxt);
                         for (int j = 0; j < tmpRvsTxt.Length; j++)
-                            tmpRvsTxt[j] = (byte) (tmpRvsTxt[j] == 0x20 ? 0xFF : tmpRvsTxt[j]);
+                            tmpRvsTxt[j] = (byte)(tmpRvsTxt[j] == 0x20 ? 0xFF : tmpRvsTxt[j]);
                         // putting the string back
                         Buffer.BlockCopy(tmpRvsTxt, 0, szTemp, stIndex, count);
                     }
 
                     // ommiting all the sequence of FALSE;
-                    while (strIndex < szTemp.Length && !tmpRvsFlag[strIndex]) 
+                    while (strIndex < szTemp.Length && !tmpRvsFlag[strIndex])
                         strIndex++;
                     stIndex = strIndex;
                 }
@@ -350,8 +378,12 @@
 
         private static bool BTxtReverse(byte a, byte b)
         {
+            if (a == b && a != 32)
+                Logger.Log(String.Format("WARN: ASCII character {0}:{1}", b, (char)b ));
             if (a == 32)
                 return true;
+            else if (b >= 0x30 && b <= 0x39)
+                return false;
             else
                 return a != b;
         }
