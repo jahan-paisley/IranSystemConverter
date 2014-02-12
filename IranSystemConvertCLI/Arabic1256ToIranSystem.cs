@@ -49,6 +49,7 @@ namespace IranSystemConvertor
                 case 0xed: /* farsi yeh - two dots underneath */
                 case 0xc6: /* yeh with hamza */
                     return true;
+                case 0xc1: /* Hamzeye */
                 case 0xc2: /* alef with madda */
                 case 0xc7: /* alef */
                 case 0xc3: /* alef with hamza above */
@@ -77,6 +78,9 @@ namespace IranSystemConvertor
             if (uni >= 0x30 && uni <= 0x39) return (byte)(uni + 80);
 
             if (uni < 0x80) return uni;
+
+            // hamza
+            if (uni == 0xc1) return 0x8f;
 
             /* Assume that a Persian letter is between the codes 0x0620 and 0x06D0 */
             /* Supozu ke Persa litero havas kodon inter 0x0620 kaj 0x06D0. */
