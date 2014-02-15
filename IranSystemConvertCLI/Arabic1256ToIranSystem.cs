@@ -74,11 +74,6 @@ namespace IranSystemConvertor
             bool beforeIsLetter = false; /* antaýa signo estas (persa) litero */
             bool afterIsLetter = false; /* posta signo estas (persa) litero */
 
-            /* Arab numbers / Arabaj ciferoj */
-            if (uni >= 0x30 && uni <= 0x39) return (byte)(uni + 80);
-
-            if (uni < 0x80) return uni;
-
             // hamza
             if (uni == 0xc1) return 0x8f;
 
@@ -299,7 +294,22 @@ namespace IranSystemConvertor
 
             //System.out.println("Ne povis konverti: >  " + uni + " " + Integer.toHexString((int)uni));
 
-            return uni;
+            return ApplyShaparakProtocol(uni);
+        }
+
+        private static byte ApplyShaparakProtocol(byte uni)
+        {
+            /* Arab numbers / Arabaj ciferoj */
+            if (uni >= 0x30 && uni <= 0x39)
+                return (byte)(uni + 80);
+            if (uni == 0x20)
+                return 0xff;
+            if (uni < 0x80)
+            {
+                Logger.Log(String.Format("WARN: ASCII character {0}:{1}", uni, (char)uni));
+                return 0xff;
+            }
+            throw new Exception(String.Format("Unexpected character {0}:{1}", uni, (char)uni));
         }
 
         public static IEnumerable<byte> ArabicToIranSys(byte[] szSrc, string irs_columns)
@@ -312,6 +322,7 @@ namespace IranSystemConvertor
                 while (!columns.Contains(colIndex) && i < szSrc.Length)
                 {
                     yield return szSrc[i];
+                    //Shaparak Delimiter which is pipe character: |
                     if (szSrc[i] == 0x7c)
                         colIndex++;
                     i++;
@@ -383,7 +394,7 @@ namespace IranSystemConvertor
         private static bool BTxtReverse(byte a, byte b)
         {
             if (a == b && a != 32)
-                Logger.Log(String.Format("WARN: ASCII character {0}:{1}", b, (char)b ));
+                Logger.Log(String.Format("WARN: ASCII character {0}:{1}", b, (char)b));
             if (a == 32)
                 return true;
             else if (b >= 0x30 && b <= 0x39)
