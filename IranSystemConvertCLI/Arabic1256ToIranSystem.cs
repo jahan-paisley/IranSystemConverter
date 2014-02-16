@@ -304,12 +304,11 @@ namespace IranSystemConvertor
                 return (byte)(uni + 80);
             if (uni == 0x20)
                 return 0xff;
-            if (uni < 0x80)
+            else //(uni < 0x80)
             {
                 Logger.Log(String.Format("WARN: ASCII character {0}:{1}", uni, (char)uni));
                 return 0xff;
             }
-            throw new Exception(String.Format("Unexpected character {0}:{1}", uni, (char)uni));
         }
 
         public static IEnumerable<byte> ArabicToIranSys(byte[] szSrc, string irs_columns)
