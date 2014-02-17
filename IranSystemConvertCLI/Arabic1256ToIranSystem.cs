@@ -326,13 +326,16 @@ namespace IranSystemConvertor
                         colIndex++;
                     i++;
                 }
-                var columnBytes = szSrc.Skip(i).TakeWhile(o => o != 0x7c).ToArray();
-                var arabicToIranSys = ArabicToIranSys(columnBytes);
-                foreach (byte t in arabicToIranSys)
-                    yield return t;
-                i += columnBytes.Length + 1;
-                colIndex++;
-                yield return 0x7c;
+                if ((columns.Contains(colIndex) && i < szSrc.Length))
+                {
+                    var columnBytes = szSrc.Skip(i).TakeWhile(o => o != 0x7c).ToArray();
+                    var arabicToIranSys = ArabicToIranSys(columnBytes);
+                    foreach (byte t in arabicToIranSys)
+                        yield return t;
+                    i += columnBytes.Length + 1;
+                    colIndex++;
+                    yield return 0x7c;
+                }
             }
         }
 
