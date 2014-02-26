@@ -1,25 +1,8 @@
 #IRANSYSTEM Convertor#
 ================================
 
-**Purpose**
+This project converts a windows 1256 encoded string to IRANSYSTEM.    
+It just converts alphanumeric characters and ignore others and it's specifically geared toward Shaparak requirements.
 
-this class converts a string containing IRANSYSTEM characters into unicode string . note that this just converts alphanumeric characters and ignore others .
+In you need to convert IranSystem to Unicode checkout https://github.com/mohsen-d/IranSystemConvertor
 
-**Usage**
-
-<pre>
-using IranSystemConvertor;
-.
-.
-.
-
-string iranSystemStr = // an IRANSYSTEM string
-
-string unicodeStr = ConvertTo.Unicode(iranSystemStr); 
-
-</pre>
-
-
-**Dependencies**
-
-no dependency

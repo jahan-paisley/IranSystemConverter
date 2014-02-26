@@ -68,7 +68,4 @@
     <Compile Include="ConvertToIranSystem.cs" />
     <Compile Include="Arabic1256ToIranSystem.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="IranSystem.publish.xml" />
-  </ItemGroup>
 </Project>
