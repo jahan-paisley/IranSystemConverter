@@ -1,4 +1,4 @@
-#IRANSYSTEM Convertor#
+#IRANSYSTEM Converter#
 ================================
 
 This project converts a windows 1256 encoded string to IRANSYSTEM.    
